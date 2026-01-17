@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: roktokhoj-postgis
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${DB_NAME}:-roktokhoj_api"
+      POSTGRES_USER: "${DB_USERNAME:-postgres}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-postgres}"
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+  backend:
+    build: .
+    container_name: roktokhoj-backend
+    depends_on:
+      - db
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: "${DB_PORT:-5432}"
+      DB_NAME: "${DB_NAME}:-roktokhoj_api"
+      DB_USERNAME: "${DB_USERNAME:-postgres}"
+      DB_PASSWORD: "${DB_PASSWORD:-postgres}"
+      DDL_AUTO: validate
+    restart: unless-stopped
+
+volumes:
+  postgis_data:

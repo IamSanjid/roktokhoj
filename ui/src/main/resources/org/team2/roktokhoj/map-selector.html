@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoktoKhoj</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 380px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 50vh;
+                padding: 15px;
+                box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            }
+            
+            #map {
+                height: 50vh;
+                min-height: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar {
+                max-height: 45vh;
+                padding: 12px;
+            }
+            
+            .sidebar h1 {
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+            }
+            
+            .form-group input {
+                font-size: 13px;
+                padding: 8px;
+            }
+            
+            button {
+                padding: 8px;
+                font-size: 13px;
+            }
+            
+            .nav-buttons {
+                gap: 3px;
+            }
+            
+            .btn-nav {
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+            
+            .result-item {
+                padding: 8px;
+                font-size: 12px;
+                margin: 6px 0;
+            }
+            
+            .info-box {
+                font-size: 11px;
+                padding: 8px;
+            }
+            
+            #map {
+                height: 45vh;
+            }
+        }
+        
+        .sidebar h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        .slider-container {
+            margin: 15px 0;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .radius-value {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 8px;
+            cursor: text;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+            flex-wrap: nowrap;
+            width: auto;
+        }
+        
+        .radius-value:hover {
+            background: #f1f8e9;
+        }
+        
+        .radius-value:focus {
+            outline: 2px solid #4CAF50;
+            background: #ffffff;
+            color: #2e7d32;
+        }
+        
+        .radius-value.invalid {
+            outline: 2px solid #f44336;
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .radius-value .edit-hint {
+            color: #7a7a7a;
+            font-size: 14px;
+            user-select: none;
+            pointer-events: none;
+        }
+        
+        .radius-value .radius-unit {
+            user-select: none;
+            pointer-events: none;
+        }
+        
+        .radius-value:hover .edit-hint,
+        #radiusNumber:focus,
+        .radius-value:hover .edit-hint {
+            color: #4CAF50;
+        }
+        
+        @media (max-width: 480px) {
+            .slider-container > div {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+            .radius-value {
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 300px) {
+            .radius-value {
+                white-space: normal;
+                flex-wrap: wrap;
+            }
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #008CBA;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #007399;
+        }
+        
+        .btn-nav {
+            width: auto;
+            padding: 8px 12px;
+            margin: 0 3px;
+            font-size: 12px;
+        }
+        
+        #map {
+            flex: 1;
+            background: #e0e0e0;
+        }
+        
+        .results-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+        
+        .results-section h2 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .result-item {
+            background: #f9f9f9;
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 4px solid #ddd;
+            border-radius: 3px;
+            font-size: 13px;
+            word-break: break-word;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .result-item:hover {
+            background: #f0f0f0;
+            border-left-color: #4CAF50;
+        }
+        
+        .result-item.selected {
+            background: #e8f5e9;
+            border-left-color: #4CAF50;
+            border-left-width: 5px;
+            font-weight: 500;
+        }
+        
+        .result-item .label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .result-item .value {
+            color: #333;
+            margin-top: 3px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .result-address {
+            color: #1976d2;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .result-coords {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .error {
+            color: #f44336;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        
+        .success {
+            color: #4CAF50;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>📍 Donate Area</h1>
+            
+            <div class="form-group">
+                <label for="address">Search Address</label>
+                <input 
+                    type="text" 
+                    id="address" 
+                    placeholder="Enter an address (e.g., Rampura, Dhaka)"
+                    autocomplete="off"
+                >
+            </div>
+            
+            <button class="btn-primary" onclick="searchAddress()">Search Results</button>
+            
+            <div id="message"></div>
+            
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>Search Results</h2>
+                <div class="nav-buttons">
+                    <button class="btn-nav btn-secondary" onclick="previousResult()" id="prevBtn">← Prev</button>
+                    <span id="resultCounter" style="flex: 1; text-align: center; align-self: center; font-size: 12px; color: #666;"></span>
+                    <button class="btn-nav btn-secondary" onclick="nextResult()" id="nextBtn">Next →</button>
+                </div>
+                <div id="resultsList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
+            </div>
+            
+            <div class="slider-container" id="radiusSection" style="display: none;">
+                <label for="radius">Radius (meters)</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input 
+                        type="range" 
+                        id="radius" 
+                        value="500"
+                        min="100"
+                        max="50000"
+                        step="10"
+                        oninput="updateRadius()"
+                        style="flex: 1;"
+                    >
+                </div>
+                <div class="radius-value" id="radiusValue">
+                    <span class="edit-hint" aria-hidden="true" title="Click to edit">✎</span>
+                    <span contenteditable="true" id="radiusNumber" title="Edit radius and press Enter">500</span>
+                    <span class="radius-unit"> m</span>
+                </div>
+            </div>
+            
+            <button class="btn-primary" id="confirmBtn" onclick="confirmSelection()" style="display: none;">Confirm Selection</button>
+            
+            <div class="info-box" style="margin-top: 20px;">
+                <strong>ℹ️ Info:</strong> Click a result to select it, adjust radius with slider, then click Confirm to submit.
+            </div>
+        </div>
+        
+        <div id="map"></div>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([20, 0], 2);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19,
+            maxNativeZoom: 18
+        }).addTo(map);
+        
+        // Global variables
+        let searchResults = [];
+        let currentResultIndex = 0;
+        let selectedResult = null;
+        let currentMarker = null;
+        let currentCircle = null;
+        let lastValidRadius = 500;
+        const API_ENDPOINT = 'http://localhost:3000/api/location'; // Dummy ServiceAPI endpoint
+        
+        // Generate hash for verification
+        function generateHash(data) {
+            const str = JSON.stringify(data);
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString(16);
+        }
+        
+        // Search for address
+        async function searchAddress() {
+            const address = document.getElementById('address').value.trim();
+            
+            if (!address) {
+                showMessage('Please enter an address', 'error');
+                return;
+            }
+            
+            showMessage('Searching...', '');
+            
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=10`
+                );
+                
+                if (!response.ok) throw new Error('Network error');
+                
+                searchResults = await response.json();
+                
+                if (searchResults.length === 0) {
+                    showMessage('No results found', 'error');
+                    return;
+                }
+                
+                currentResultIndex = 0;
+                selectedResult = 0; // Auto-select first result
+                document.getElementById('resultsSection').style.display = 'block';
+                document.getElementById('radiusSection').style.display = 'block'; // Show slider by default
+                document.getElementById('confirmBtn').style.display = 'block'; // Show confirm button
+                
+                // Initialize radius
+                document.getElementById('radius').value = 500;
+                
+                displayCurrentResult();
+                updateRadius(); // Draw circle for first result
+                showMessage(`Found ${searchResults.length} results - First result selected`, 'success');
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+        
+        function getViewZoom() {
+            if (!currentCircle || lastValidRadius < 8000) {
+                return 13;
+            }
+            return map.getBoundsZoom(currentCircle.getBounds());
+        }
+        
+        // Display current search result
+        function displayCurrentResult() {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+            
+            searchResults.forEach((result, index) => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                if (index === currentResultIndex) div.classList.add('selected');
+                
+                div.innerHTML = `
+                    <div class="result-address">${result.display_name.split(',')[0]}</div>
+                    <div class="result-coords">
+                        <strong>Lat:</strong> ${parseFloat(result.lat).toFixed(6)}<br>
+                        <strong>Lon:</strong> ${parseFloat(result.lon).toFixed(6)}<br>
+                        <strong>Type:</strong> ${result.type}
+                    </div>
+                `;
+                
+                div.onclick = () => selectResult(index);
+                resultsList.appendChild(div);
+            });
+            
+            // Update counter
+            document.getElementById('resultCounter').textContent = `${currentResultIndex + 1} / ${searchResults.length}`;
+            
+            // Update nav buttons
+            document.getElementById('prevBtn').disabled = currentResultIndex === 0;
+            document.getElementById('nextBtn').disabled = currentResultIndex === searchResults.length - 1;
+            
+            // Draw selected result
+            if (selectedResult !== null) {
+                const result = searchResults[selectedResult];
+                const lat = parseFloat(result.lat);
+                const lon = parseFloat(result.lon);
+                const radius = parseInt(document.getElementById('radius').value);
+                
+                map.setView([lat, lon], getViewZoom());
+                drawCircle(lat, lon, radius);
+            } else {
+                const result = searchResults[currentResultIndex];
+                const lat = parseFloat(result.lat);
+                const lon = parseFloat(result.lon);
+                
+                map.setView([lat, lon], getViewZoom());
+                if (currentMarker) map.removeLayer(currentMarker);
+                if (currentCircle) map.removeLayer(currentCircle);
+                
+                currentMarker = L.marker([lat, lon]).addTo(map)
+                    .bindPopup(result.display_name)
+                    .openPopup();
+            }
+        }
+        
+        // Select a result
+        function selectResult(index) {
+            selectedResult = index;
+            currentResultIndex = index;
+            
+            // Keep the existing radius value
+            const currentRadius = parseInt(document.getElementById('radius').value);
+            
+            document.getElementById('radiusSection').style.display = 'block';
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('radius').value = currentRadius;
+            updateRadius();
+            
+            displayCurrentResult();
+            showMessage('Result selected! Adjust radius and confirm', 'success');
+        }
+        
+        // Navigate results
+        function previousResult() {
+            if (currentResultIndex > 0) {
+                currentResultIndex--;
+                displayCurrentResult();
+            }
+        }
+        
+        function nextResult() {
+            if (currentResultIndex < searchResults.length - 1) {
+                currentResultIndex++;
+                displayCurrentResult();
+            }
+        }
+        
+        // Set the label content (keeps the edit icon and unit)
+        function setRadiusLabel(radius) {
+            const numberSpan = document.getElementById('radiusNumber');
+            numberSpan.textContent = radius;
+            document.getElementById('radiusValue').classList.remove('invalid');
+        }
+
+        // Update radius and redraw circle from slider
+        function updateRadius() {
+            const radius = parseInt(document.getElementById('radius').value);
+            lastValidRadius = radius;
+            setRadiusLabel(radius);
+            
+            if (selectedResult !== null) {
+                const result = searchResults[selectedResult];
+                const lat = parseFloat(result.lat);
+                const lon = parseFloat(result.lon);
+                drawCircle(lat, lon, radius);
+            }
+        }
+        
+        // Parse numeric value from the editable number span
+        function parseRadiusLabel() {
+            const numberSpan = document.getElementById('radiusNumber');
+            const match = numberSpan.textContent.match(/\d+/);
+            return match ? parseInt(match[0]) : NaN;
+        }
+
+        // Handle live edits without overriding invalid input immediately
+        function handleRadiusLabelInput() {
+            const val = parseRadiusLabel();
+            const slider = document.getElementById('radius');
+            const label = document.getElementById('radiusValue');
+            
+            if (Number.isFinite(val) && val >= 100 && val <= 50000) {
+                slider.value = val;
+                lastValidRadius = val;
+                label.classList.remove('invalid');
+                
+                if (selectedResult !== null) {
+                    const result = searchResults[selectedResult];
+                    const lat = parseFloat(result.lat);
+                    const lon = parseFloat(result.lon);
+                    drawCircle(lat, lon, val);
+                }
+            } else {
+                label.classList.add('invalid');
+                // Do not modify slider or label content yet
+            }
+        }
+
+        // Commit edit on blur or Enter, fallback to last valid or min
+        function commitRadiusLabelEdit() {
+            let val = parseRadiusLabel();
+            if (!(Number.isFinite(val) && val >= 100 && val <= 50000)) {
+                val = Math.max(100, Math.min(50000, lastValidRadius || 100));
+            }
+            document.getElementById('radius').value = val;
+            lastValidRadius = val;
+            setRadiusLabel(val);
+            
+            if (selectedResult !== null) {
+                const result = searchResults[selectedResult];
+                const lat = parseFloat(result.lat);
+                const lon = parseFloat(result.lon);
+                drawCircle(lat, lon, val);
+            }
+        }
+        
+        // Draw circle on map
+        function drawCircle(lat, lon, radius) {
+            if (currentMarker) map.removeLayer(currentMarker);
+            if (currentCircle) map.removeLayer(currentCircle);
+            
+            currentMarker = L.marker([lat, lon]).addTo(map);
+            currentCircle = L.circle([lat, lon], {
+                radius: radius,
+                color: '#4CAF50',
+                weight: 2,
+                opacity: 0.8,
+                fill: true,
+                fillColor: '#4CAF50',
+                fillOpacity: 0.2
+            }).addTo(map);
+
+            map.setZoom(getViewZoom());
+        }
+        
+        // Confirm and send to ServiceAPI
+        async function confirmSelection() {
+            if (selectedResult === null) {
+                showMessage('Please select a result first', 'error');
+                return;
+            }
+            
+            const result = searchResults[selectedResult];
+            const radius = parseInt(document.getElementById('radius').value);
+            const address = document.getElementById('address').value;
+            
+            const payload = {
+                searchAddress: address,
+                selectedResult: {
+                    display_name: result.display_name,
+                    lat: parseFloat(result.lat),
+                    lon: parseFloat(result.lon),
+                    type: result.type,
+                    osm_id: result.osm_id
+                },
+                radius: radius
+            };
+            
+            // Generate hash of selected result for verification
+            const resultHash = generateHash({
+                lat: payload.selectedResult.lat,
+                lon: payload.selectedResult.lon,
+                display_name: payload.selectedResult.display_name
+            });
+            
+            payload.selectedResultHash = resultHash;
+            
+            showMessage('Sending to server...', '');
+            
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                // Handle both success and error responses
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('✓ Successfully sent to server!', 'success');
+                    console.log('Server response:', data);
+                } else {
+                    showMessage('Server error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                // ServiceAPI endpoint doesn't exist yet, show what would be sent
+                showMessage('Dummy API - Data ready (see console)', 'success');
+                console.log('Would send to API:', payload);
+                console.log('Result Hash:', resultHash);
+            }
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = type;
+            
+            if (type !== '') {
+                setTimeout(() => {
+                    messageDiv.textContent = '';
+                    messageDiv.className = '';
+                }, 4000);
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.getElementById('address').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchAddress();
+        });
+        
+        document.getElementById('radius').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') confirmSelection();
+        });
+
+        // Editable radius label events
+        const radiusNumber = document.getElementById('radiusNumber');
+        radiusNumber.addEventListener('input', () => {
+            handleRadiusLabelInput();
+        });
+        radiusNumber.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                radiusNumber.blur();
+                commitRadiusLabelEdit();
+            }
+        });
+        radiusNumber.addEventListener('blur', () => {
+            commitRadiusLabelEdit();
+        });
+    </script>
+</body>
+</html>
