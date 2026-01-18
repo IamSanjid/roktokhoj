@@ -1,6 +1,7 @@
 package org.team2.roktokhoj_backend.config;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,6 +15,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseError> generateResponseError(ResponseStatusException ex) {
         var responseError = new ResponseError();
         responseError.setMessage(ex.getReason());
+        responseError.setStatus(ex.getStatusCode().value());
+        responseError.setTimeStamp(Instant.now().toEpochMilli());
+
+        return new ResponseEntity<>(responseError, ex.getStatusCode());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseError> handleValidationException(MethodArgumentNotValidException ex) {
+        var responseError = new ResponseError();
+        responseError.setMessage(ex.getMessage());
         responseError.setStatus(ex.getStatusCode().value());
         responseError.setTimeStamp(Instant.now().toEpochMilli());
 

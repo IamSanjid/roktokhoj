@@ -13,7 +13,7 @@ import lombok.Setter;
 @Data
 public class FindBloodDonor {
     @JsonProperty("address_selection")
-    @NotNull(message = "The search address is required.")
+    @NotNull(message = "The address where to search is required.")
     private AddressSelection addressSelection;
 
     @JsonProperty("blood_group")

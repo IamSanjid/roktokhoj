@@ -1,10 +1,7 @@
 package org.team2.roktokhoj_backend.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +26,7 @@ public class BloodDonor {
     private String email;
 
     @JsonProperty("blood_group")
+    @NotNull(message = "The blood group is required.")
     private BloodGroup bloodGroup;
 
     public static BloodDonor fromEntity(org.team2.roktokhoj_backend.entities.BloodDonor donor) {

@@ -125,14 +125,22 @@ public class AddressSelector extends GridPane {
             }
         });
 
-        txtRadius.textProperty().addListener((_, _, newText) -> {
+        Runnable updateRadiusFromTxt = () -> {
             try {
-                currentRadius = Double.parseDouble(newText);
+                currentRadius = Double.parseDouble(txtRadius.getText());
                 sbRadius.setValue(currentRadius);
                 updateArea();
             } catch (Exception _) {
-                // ignore..
+                // ignore...
             }
+        };
+
+        txtRadius.focusedProperty().addListener((_, _, _) -> {
+            updateRadiusFromTxt.run();
+        });
+
+        txtRadius.setOnAction(_ -> {
+            updateRadiusFromTxt.run();
         });
     }
 

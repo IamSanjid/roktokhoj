@@ -16,8 +16,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class ServiceAPI {
     public static final URI API;
-    public static final URI RegisterDonorEndpoint;
-    public static final URI FindDonorEndpoint;
+    public static final URI REGISTER_DONOR_ENDPOINT;
+    public static final URI FIND_DONOR_ENDPOINT;
 
     static {
         var configUrl = ServiceAPI.class.getResource("config.json");
@@ -37,8 +37,8 @@ public class ServiceAPI {
         }
         try {
             API = URI.create(config.getServiceAPIUrl());
-            RegisterDonorEndpoint = Utils.newURIWithPath(API, "register_donor");
-            FindDonorEndpoint = Utils.newURIWithPath(API, "find_donor");
+            REGISTER_DONOR_ENDPOINT = Utils.newURIWithPath(API, "register_donor");
+            FIND_DONOR_ENDPOINT = Utils.newURIWithPath(API, "find_donor");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -50,18 +50,17 @@ public class ServiceAPI {
     private static final Type RESPONSE_ERROR_TYPE = new TypeToken<ResponseError>() {}.getType();
 
     public static CompletableFuture<BloodDonor> registerBloodDonor(RegisterBloodDonor registerBloodDonor) {
-        return postJson(RegisterDonorEndpoint, registerBloodDonor, BLOOD_DONOR_TYPE);
+        return postJson(REGISTER_DONOR_ENDPOINT, registerBloodDonor, BLOOD_DONOR_TYPE);
     }
 
     public static CompletableFuture<List<BloodDonor>> findBloodDonor(FindBloodDonor findBloodDonor) {
-        return postJson(FindDonorEndpoint, findBloodDonor, BLOOD_DONOR_LIST_TYPE);
+        return postJson(FIND_DONOR_ENDPOINT, findBloodDonor, BLOOD_DONOR_LIST_TYPE);
     }
 
     private static<T, R> CompletableFuture<R> postJson(URI endpoint, T bodyObject, Type resultType) {
         var body = GsonHelper.getInstance().toJson(bodyObject);
         return CompletableFuture.supplyAsync(Utils.wrapFutureToSupplier(RHttpClient.postString(endpoint, body)))
-                .handle((r, e) -> {
-                    if (e != null) throw new RuntimeException(e);
+                .thenApply(r -> {
                     var re = checkForResponseError(r);
                     if (re != null) {
                         throw new RuntimeException(re.getMessage());
