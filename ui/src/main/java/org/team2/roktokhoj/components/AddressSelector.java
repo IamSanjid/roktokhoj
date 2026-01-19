@@ -16,6 +16,7 @@ import javafx.scene.shape.Circle;
 import org.team2.roktokhoj.MapsAPI;
 import org.team2.roktokhoj.Utils;
 import org.team2.roktokhoj.models.AddressSelection;
+import org.team2.roktokhoj.models.map.IpGeo;
 import org.team2.roktokhoj.models.map.Place;
 
 import java.io.IOException;
@@ -44,6 +45,10 @@ public class AddressSelector extends GridPane {
     private double currentRadius = 5000.;
     private int selectedPlace = -1;
     private int customMaps = 0;
+
+    private static final double DEFAULT_STARTING_ZOOM = 13.;
+
+    public static final IpGeo DEFAULT_IP_GEO = new IpGeo("success", 23.7104, 90.4074);
 
     public AddressSelector() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
@@ -142,6 +147,15 @@ public class AddressSelector extends GridPane {
         txtRadius.setOnAction(_ -> {
             updateRadiusFromTxt.run();
         });
+
+        MapsAPI.getCurrentAddressByIp().handle((r, e) -> {
+            if (e == null) {
+                Platform.runLater(() -> onAddressByIp(r));
+                return r;
+            }
+            Platform.runLater(() -> onAddressByIp(DEFAULT_IP_GEO));
+            return null;
+        });
     }
 
     @FXML
@@ -161,8 +175,18 @@ public class AddressSelector extends GridPane {
         this.setDisable(true);
     }
 
-    @FXML protected void onClearClicked() {
+    @FXML
+    protected void onClearClicked() {
         reset();
+    }
+
+    private void onAddressByIp(IpGeo ipGeo) {
+        if (ipGeo == null || !ipGeo.getStatus().equalsIgnoreCase("success")) {
+            ipGeo = DEFAULT_IP_GEO;
+        }
+
+        mapView.setCenter(ipGeo.getLat(), ipGeo.getLon());
+        mapView.setZoom(DEFAULT_STARTING_ZOOM);
     }
 
     private void onNewAddressResult(List<Place> places, int defaultSelect) {
@@ -192,7 +216,7 @@ public class AddressSelector extends GridPane {
     private void updateArea() {
         if (selectedPlace < 0) return;
         var place = currentPlaces.get(selectedPlace);
-        var zoom = 13.;
+        var zoom = DEFAULT_STARTING_ZOOM;
         var mapViewWidth = mapView.getLayoutBounds().getWidth();
         var mapViewHeight = mapView.getLayoutBounds().getHeight();
         double radius = Utils.getScreenCircleRadius(place.getLat(), currentRadius, zoom);
@@ -250,7 +274,7 @@ public class AddressSelector extends GridPane {
             this.place = place;
             this.icon = icon;
             area = new Circle(radius, Color.color(76 / 255., 175 / 255., 80 / 255., 0.2));
-            area.setStroke(Color.color(101/255., 182/255., 103/255.));
+            area.setStroke(Color.color(101 / 255., 182 / 255., 103 / 255.));
             area.setStrokeWidth(2.);
 
             this.getChildren().add(this.icon);
