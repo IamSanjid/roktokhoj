@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName;
 public class IpGeo {
     @SerializedName("status")
     private String status;
+
     @SerializedName("lat")
     private double lat;
+
     @SerializedName("lon")
     private double lon;
 

@@ -1,10 +1,12 @@
 package org.team2.roktokhoj;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public class RHttpClient {
@@ -46,26 +48,36 @@ public class RHttpClient {
     }
 
     public static Future<String> fetchString(URI uri) {
-        return ThreadPool.getExecutor().submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .GET()
                     .build();
-            HttpResponse<String> response = threadLocalValue.get().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = null;
+            try {
+                response = threadLocalValue.get().send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return response.body();
-        });
+        }, ThreadPool.getExecutor());
     }
 
-    public static Future<String> postString(URI uri, String body) {
-        return ThreadPool.getExecutor().submit(() -> {
+    public static CompletableFuture<String> postString(URI uri, String body) {
+        return CompletableFuture.supplyAsync(() -> {
             var bodyPublisher = HttpRequest.BodyPublishers.ofString(body);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .header("Content-Type", "application/json")
                     .POST(bodyPublisher)
                     .build();
-            HttpResponse<String> response = threadLocalValue.get().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = null;
+            try {
+                response = threadLocalValue.get().send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return response.body();
-        });
+        }, ThreadPool.getExecutor());
     }
 }

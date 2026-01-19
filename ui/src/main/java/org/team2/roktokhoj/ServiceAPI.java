@@ -45,9 +45,12 @@ public class ServiceAPI {
 
     }
 
-    private static final Type BLOOD_DONOR_TYPE = new TypeToken<BloodDonor>() {}.getType();
-    private static final Type BLOOD_DONOR_LIST_TYPE = new TypeToken<List<BloodDonor>>() {}.getType();
-    private static final Type RESPONSE_ERROR_TYPE = new TypeToken<ResponseError>() {}.getType();
+    private static final Type BLOOD_DONOR_TYPE = new TypeToken<BloodDonor>() {
+    }.getType();
+    private static final Type BLOOD_DONOR_LIST_TYPE = new TypeToken<List<BloodDonor>>() {
+    }.getType();
+    private static final Type RESPONSE_ERROR_TYPE = new TypeToken<ResponseError>() {
+    }.getType();
 
     public static CompletableFuture<BloodDonor> registerBloodDonor(RegisterBloodDonor registerBloodDonor) {
         return postJson(REGISTER_DONOR_ENDPOINT, registerBloodDonor, BLOOD_DONOR_TYPE);
@@ -57,7 +60,7 @@ public class ServiceAPI {
         return postJson(FIND_DONOR_ENDPOINT, findBloodDonor, BLOOD_DONOR_LIST_TYPE);
     }
 
-    private static<T, R> CompletableFuture<R> postJson(URI endpoint, T bodyObject, Type resultType) {
+    private static <T, R> CompletableFuture<R> postJson(URI endpoint, T bodyObject, Type resultType) {
         var body = GsonHelper.getInstance().toJson(bodyObject);
         return CompletableFuture.supplyAsync(Utils.wrapFutureToSupplier(RHttpClient.postString(endpoint, body)))
                 .thenApply(r -> {

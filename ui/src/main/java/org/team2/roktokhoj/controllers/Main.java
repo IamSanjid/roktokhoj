@@ -120,7 +120,7 @@ public class Main implements Initializable {
         AddressSelection addressSelection;
         try {
             addressSelection = registerAddressSelector.getSelection();
-        }   catch (Exception ex) {
+        } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Address selection error: " + ex.getMessage(), ButtonType.OK);
             alert.showAndWait();
             return;
