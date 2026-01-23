@@ -36,7 +36,7 @@
         </Label>
         <ChoiceBox fx:id="cbSearchResults" prefWidth="150.0"/>
         <Label text="Radius(meters)"/>
-        <Slider fx:id="sbRadius" disable="true" max="50000.0" min="500.0" value="5000.0"/>
+        <Slider fx:id="sbRadius" disable="true" max="50000.0" min="500.0" value="800.0"/>
         <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="5.0">
             <TextField fx:id="txtRadius" alignment="CENTER" disable="true" text="5000"/>
             <Label text="m"/>

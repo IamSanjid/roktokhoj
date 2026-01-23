@@ -3,6 +3,9 @@ package org.team2.roktokhoj.models;
 import com.google.gson.annotations.SerializedName;
 
 public class BloodDonor {
+    @SerializedName("id")
+    private long id = -1;
+
     @SerializedName("name")
     private String name;
 
@@ -15,14 +18,24 @@ public class BloodDonor {
     @SerializedName("blood_group")
     private BloodGroup bloodGroup;
 
+    @SerializedName("availability")
+    private Availability availability;
+
+    @SerializedName("token")
+    private String token = "";
+
+    @SerializedName("token_exp")
+    private long tokenExpiration = -1;
+
     public BloodDonor() {
     }
 
-    public BloodDonor(String name, String phone, String email, BloodGroup bloodGroup) {
+    public BloodDonor(String name, String phone, String email, BloodGroup bloodGroup, Availability availability) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.bloodGroup = bloodGroup;
+        this.availability = availability;
     }
 
     public String getName() {
@@ -41,6 +54,18 @@ public class BloodDonor {
         return bloodGroup;
     }
 
+    public Availability getAvailability() {
+        return availability;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public long getTokenExpiration() {
+        return tokenExpiration;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -55,5 +80,9 @@ public class BloodDonor {
 
     public void setBloodGroup(BloodGroup bloodGroup) {
         this.bloodGroup = bloodGroup;
+    }
+
+    public void setAvailability(Availability availability) {
+        this.availability = availability;
     }
 }

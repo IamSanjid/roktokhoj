@@ -63,6 +63,23 @@ public class RHttpClient {
         }, ThreadPool.getExecutor());
     }
 
+    public static Future<String> fetchString(URI uri, String auth) {
+        return CompletableFuture.supplyAsync(() -> {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .header("Authorization", auth)
+                    .GET()
+                    .build();
+            HttpResponse<String> response = null;
+            try {
+                response = threadLocalValue.get().send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return response.body();
+        }, ThreadPool.getExecutor());
+    }
+
     public static CompletableFuture<String> postString(URI uri, String body) {
         return CompletableFuture.supplyAsync(() -> {
             var bodyPublisher = HttpRequest.BodyPublishers.ofString(body);
@@ -70,6 +87,44 @@ public class RHttpClient {
                     .uri(uri)
                     .header("Content-Type", "application/json")
                     .POST(bodyPublisher)
+                    .build();
+            HttpResponse<String> response = null;
+            try {
+                response = threadLocalValue.get().send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return response.body();
+        }, ThreadPool.getExecutor());
+    }
+
+    public static CompletableFuture<String> postString(URI uri, String body, String auth) {
+        return CompletableFuture.supplyAsync(() -> {
+            var bodyPublisher = HttpRequest.BodyPublishers.ofString(body);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", auth)
+                    .POST(bodyPublisher)
+                    .build();
+            HttpResponse<String> response = null;
+            try {
+                response = threadLocalValue.get().send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return response.body();
+        }, ThreadPool.getExecutor());
+    }
+
+    public static CompletableFuture<String> putString(URI uri, String body, String auth) {
+        return CompletableFuture.supplyAsync(() -> {
+            var bodyPublisher = HttpRequest.BodyPublishers.ofString(body);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", auth)
+                    .PUT(bodyPublisher)
                     .build();
             HttpResponse<String> response = null;
             try {

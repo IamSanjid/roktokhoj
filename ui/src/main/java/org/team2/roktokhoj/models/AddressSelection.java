@@ -15,6 +15,18 @@ public class AddressSelection {
     @SerializedName("radius")
     private Double radius;
 
+    public Double getLat() {
+        return lat;
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public Double getRadius() {
+        return radius;
+    }
+
     public void setLat(Double lat) {
         this.lat = lat;
     }

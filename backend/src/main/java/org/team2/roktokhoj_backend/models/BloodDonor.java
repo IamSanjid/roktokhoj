@@ -17,17 +17,27 @@ public class BloodDonor {
 
     @JsonProperty("phone")
     @NotEmpty(message = "The phone number is required.")
-    @Pattern(regexp = "^\\+?(\\d{11,15})$", flags = { Pattern.Flag.CASE_INSENSITIVE }, message = "The Phone number is invalid.")
+    @Pattern(regexp = "^\\+?(\\d{11,15})$", flags = {Pattern.Flag.CASE_INSENSITIVE}, message = "The Phone number is invalid.")
     private String phone;
 
     @JsonProperty("email")
     @NotEmpty(message = "The email address is required.")
-    @Email(message = "The email address is invalid.", flags = { Pattern.Flag.CASE_INSENSITIVE })
+    @Email(message = "The email address is invalid.", flags = {Pattern.Flag.CASE_INSENSITIVE})
     private String email;
 
     @JsonProperty("blood_group")
     @NotNull(message = "The blood group is required.")
     private BloodGroup bloodGroup;
+
+    @JsonProperty("availability")
+    @NotNull(message = "The blood group is required.")
+    private Availability availability;
+
+    @JsonProperty("token")
+    private String token = "";
+
+    @JsonProperty("token_exp")
+    private long tokenExpiration = -1;
 
     public static BloodDonor fromEntity(org.team2.roktokhoj_backend.entities.BloodDonor donor) {
         var instance = new BloodDonor();
@@ -35,6 +45,7 @@ public class BloodDonor {
         instance.name = donor.getName();
         instance.email = donor.getEmail();
         instance.phone = donor.getPhone();
+        instance.availability = donor.getAvailability();
         return instance;
     }
 }

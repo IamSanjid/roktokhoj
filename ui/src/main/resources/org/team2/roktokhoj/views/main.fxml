@@ -1,112 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<?import org.team2.roktokhoj.components.AddressSelector?>
-
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx"
-      fx:controller="org.team2.roktokhoj.controllers.Main">
+      fx:controller="org.team2.roktokhoj.views.Main">
     <TabPane fx:id="tabView" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-        <Tab fx:id="searchDonorView" closable="false" text="Search Donor">
+        <Tab closable="false" text="Search Donor">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-Infinity" prefWidth="-Infinity">
-                <VBox alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                    </padding>
-                    <TabPane fx:id="searchTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                        <Tab text="Filter">
-                            <VBox alignment="CENTER" spacing="5.0">
-                                <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                </padding>
-                                <HBox alignment="CENTER" spacing="5.0">
-                                    <Label text="Blood Group:"/>
-                                    <ComboBox fx:id="searchCbBloodGroup" prefWidth="150.0"/>
-                                </HBox>
-                                <AddressSelector fx:id="searchAddressSelector" hgap="5.0" VBox.vgrow="ALWAYS"/>
-                            </VBox>
-                        </Tab>
-                        <Tab fx:id="searchResultsTab" text="Search Results">
-                            <ScrollPane fitToHeight="true" fitToWidth="true">
-                                <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                </padding>
-                                <VBox>
-                                    <TableView fx:id="searchResultTable" prefHeight="-Infinity" prefWidth="-Infinity"
-                                               VBox.vgrow="ALWAYS">
-                                        <VBox.margin>
-                                            <Insets/>
-                                        </VBox.margin>
-                                    </TableView>
-                                </VBox>
-                            </ScrollPane>
-                        </Tab>
-                    </TabPane>
-                    <ButtonBar>
-                        <buttons>
-                            <Button mnemonicParsing="false" onAction="#onSearchResetClicked" text="Reset"/>
-                            <Button mnemonicParsing="false" onAction="#onSearchClicked" text="Search"/>
-                        </buttons>
-                    </ButtonBar>
-                </VBox>
+                <fx:include fx:id="searchView" source="search.fxml" alignment="CENTER" spacing="5.0"
+                            AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             </AnchorPane>
         </Tab>
-        <Tab fx:id="registerDonorView" closable="false" onSelectionChanged="#onTabSelectionChanged"
-             text="Register as Donor">
+        <Tab closable="false" onSelectionChanged="#onTabSelectionChanged"
+             text="Register">
             <AnchorPane minHeight="0.0" minWidth="0.0">
-                <VBox alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                    </padding>
-                    <GridPane hgap="10.0" minHeight="90" VBox.vgrow="ALWAYS">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0"/>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0"/>
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" percentHeight="50.0" vgrow="SOMETIMES"/>
-                            <RowConstraints minHeight="10.0" percentHeight="50.0" vgrow="SOMETIMES"/>
-                        </rowConstraints>
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0">
-                            <Label text="Name:"/>
-                            <TextField fx:id="registerTxtName"/>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" GridPane.rowIndex="1">
-                            <Label text="Email:"/>
-                            <TextField fx:id="registerTxtEmail"/>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1">
-                            <Label text="Phone:"/>
-                            <TextField fx:id="registerTxtPhone"/>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <Label text="Blood Group:"/>
-                            <ComboBox fx:id="registerCbBloodGroup" prefWidth="150.0"/>
-                        </HBox>
-                    </GridPane>
-                    <AddressSelector fx:id="registerAddressSelector" hgap="5.0" VBox.vgrow="ALWAYS"/>
-                    <HBox alignment="CENTER" spacing="5.0">
-                        <Button mnemonicParsing="false" onAction="#onRegisterClicked" text="Register"/>
-                        <Button mnemonicParsing="false" onAction="#onRegisterViewClearClicked" text="Clear"/>
-                    </HBox>
-                </VBox>
+                <fx:include fx:id="registerView" source="register.fxml" alignment="CENTER" spacing="5.0"
+                            AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            </AnchorPane>
+        </Tab>
+        <Tab closable="false"  text="Profile">
+            <AnchorPane minHeight="0.0" minWidth="0.0">
+                <fx:include fx:id="profileView" source="profile.fxml" alignment="CENTER" spacing="5.0"
+                            AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             </AnchorPane>
         </Tab>
     </TabPane>
