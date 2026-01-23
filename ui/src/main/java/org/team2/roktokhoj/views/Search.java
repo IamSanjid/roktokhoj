@@ -52,17 +52,7 @@ public class Search implements Initializable, ViewController {
         searchAddressSelector.reset();
         searchCbBloodGroup.getItems().clear();
         searchCbBloodGroup.getItems().setAll(BloodGroup.values());
-
         searchResultTable.getItems().clear();
-        var nameColumn = new TableColumn<BloodDonor, String>("Name");
-        var phoneColumn = new TableColumn<BloodDonor, String>("Phone");
-        var emailColumn = new TableColumn<BloodDonor, String>("Email");
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        @SuppressWarnings("unchecked")
-        TableColumn<BloodDonor, ?>[] columns = new TableColumn[]{nameColumn, phoneColumn, emailColumn};
-        searchResultTable.getColumns().addAll(columns);
     }
 
     @FXML

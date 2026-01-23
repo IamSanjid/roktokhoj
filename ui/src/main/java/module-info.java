@@ -1,4 +1,6 @@
 module org.team2.roktokhoj {
+    requires javafx.base;
+    requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
 

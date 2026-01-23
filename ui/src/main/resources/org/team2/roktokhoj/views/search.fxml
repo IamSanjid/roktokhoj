@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.team2.roktokhoj.components.AddressSelector?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <VBox fx:id="view" prefHeight="600.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx" fx:controller="org.team2.roktokhoj.views.Search">
     <padding>
@@ -33,6 +34,23 @@
                         <VBox.margin>
                             <Insets/>
                         </VBox.margin>
+                        <columns>
+                            <TableColumn text="Name">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="name"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn text="Phone">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="phone"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn text="Email">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="email"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                        </columns>
                     </TableView>
                 </VBox>
             </ScrollPane>

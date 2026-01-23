@@ -6,11 +6,13 @@ services:
     container_name: roktokhoj-postgis
     restart: unless-stopped
     environment:
-      POSTGRES_DB: "${DB_NAME}:-roktokhoj_api"
+      POSTGRES_DB: "${DB_NAME:-roktokhoj_api}"
       POSTGRES_USER: "${DB_USERNAME:-postgres}"
       POSTGRES_PASSWORD: "${DB_PASSWORD:-postgres}"
     ports:
       - "${DB_PORT:-5432}:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
 
   backend:
     build: .
@@ -22,10 +24,10 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: "${DB_PORT:-5432}"
-      DB_NAME: "${DB_NAME}:-roktokhoj_api"
+      DB_NAME: "${DB_NAME:-roktokhoj_api}"
       DB_USERNAME: "${DB_USERNAME:-postgres}"
       DB_PASSWORD: "${DB_PASSWORD:-postgres}"
-      DDL_AUTO: validate
+      DDL_AUTO: "${DDL_AUTO:-validate}"
       JWT_SECRET: "${JWT_SECRET:-c65fd8a7299ba88bbbca7b794e2d55b6e805811d1a6db100b60b3dcaf7e29185}"
       ORIGINS: "${ORIGINS-*}"
     restart: unless-stopped

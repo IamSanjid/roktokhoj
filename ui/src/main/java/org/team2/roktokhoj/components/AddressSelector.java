@@ -88,6 +88,15 @@ public class AddressSelector extends GridPane {
             }
         });
 
+        txtAddress.setOnAction(e -> {
+            e.consume();
+            try {
+                onAddressSearchClicked();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         cbSearchResults.getSelectionModel().selectedIndexProperty().addListener((_, _, newIndex) -> {
             if (selectedPlace < 0 || newIndex.intValue() < 0) {
                 return;
