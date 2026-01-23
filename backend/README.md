@@ -16,6 +16,7 @@ It uses **PostgreSQL with the PostGIS extension** to efficiently store and query
 * **Flyway** – Database migrations
 * **Bean Validation** – Input validation
 * **Lombok** – Boilerplate reduction
+* **JWT** - Authentication
 * **Maven**
 * **Java 25**
 
@@ -38,14 +39,16 @@ The backend is configured using environment variables.
 
 ### Variables
 
-| Variable      | Description                        | Default         |
-|---------------|------------------------------------|-----------------|
-| `DB_HOST`     | PostgreSQL host                    | `localhost`     |
-| `DB_PORT`     | PostgreSQL port                    | `5432`          |
-| `DB_NAME`     | Database name (created if missing) | `roktokhoj_api` |
-| `DB_USERNAME` | Database username                  | `postgres`      |
-| `DB_PASSWORD` | Database password                  | ***required**   |
-| `DDL_AUTO`    | Hibernate DDL mode                 | `validate`      |
+| Variable      | Description                                   | Default         |
+|---------------|-----------------------------------------------|-----------------|
+| `DB_HOST`     | PostgreSQL host                               | `localhost`     |
+| `DB_PORT`     | PostgreSQL port                               | `5432`          |
+| `DB_NAME`     | Database name (created if missing)            | `roktokhoj_api` |
+| `DB_USERNAME` | Database username                             | `postgres`      |
+| `DB_PASSWORD` | Database password                             | ***required**   |
+| `DDL_AUTO`    | Hibernate DDL mode                            | `validate`      |
+| `JWT_SECRET`  | The secret key which will be used for signing | ***required**   |
+| `ORIGINS`     | Allowed origins for CORS                      | `*`             |
 
 ### Example `.env`
 
@@ -56,6 +59,7 @@ DB_NAME=roktokhoj_api
 DB_USERNAME=postgres
 DB_PASSWORD=1234
 DDL_AUTO=validate
+JWT_SECRET=roktokhoj_api_super_secret
 ```
 
 > 💡 `DDL_AUTO` is optional and maps to `spring.jpa.hibernate.ddl-auto`.
@@ -159,7 +163,7 @@ Docker Compose will automatically pick up the `.env` file and apply the override
 
 * The backend connects to the database using service name `db`, so internal networking works regardless of host port choice.
 * Keep sensitive info out of your repo — add `.env` to `.gitignore` if needed.
-* The `resources/config.json` of the RoktoKhoj-UI also needs to be updated with the port and host.
+* The `resources/**/config.json` of the RoktoKhoj-UI also needs to be updated with the port and host.
 * You can stop everything with:
 
 ```bash
@@ -173,4 +177,4 @@ docker compose down
 * Make sure PostGIS is installed with PostgreSQL **before** starting the app
 * Database migrations are handled via **Flyway**
 * The backend is intended to be used together with the **RoktoKhoj JavaFX UI**
-  * The `resources/config.json` also needs to be synced with the backend's host and port.
+  * The `resources/**/config.json` also needs to be synced with the backend's host and port.

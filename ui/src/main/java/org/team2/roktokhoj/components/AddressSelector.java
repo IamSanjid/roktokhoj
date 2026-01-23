@@ -25,6 +25,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class AddressSelector extends GridPane {
+    public static final IpGeo DEFAULT_IP_GEO = new IpGeo("success", 23.7104, 90.4074);
+    public static final double DEFAULT_RADIUS = 800.;
+    private static final double DEFAULT_STARTING_ZOOM = 13.;
+
     @FXML
     private MapView mapView;
 
@@ -42,13 +46,9 @@ public class AddressSelector extends GridPane {
 
     private List<Place> currentPlaces;
     private CustomMapLayer customMapLayer = null;
-    private double currentRadius = 5000.;
+    private double currentRadius = DEFAULT_RADIUS;
     private int selectedPlace = -1;
     private int customMaps = 0;
-
-    private static final double DEFAULT_STARTING_ZOOM = 13.;
-
-    public static final IpGeo DEFAULT_IP_GEO = new IpGeo("success", 23.7104, 90.4074);
 
     public AddressSelector() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
@@ -84,18 +84,7 @@ public class AddressSelector extends GridPane {
         mapView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 var mapPoint = mapView.getMapPosition(e.getX(), e.getY());
-                var newPlace = new Place();
-                newPlace.setDisplayName("#" + customMaps + ".Custom-Map");
-                newPlace.setLat(mapPoint.getLatitude());
-                newPlace.setLon(mapPoint.getLongitude());
-                customMaps += 1;
-
-                if (selectedPlace < 0) {
-                    onNewAddressResult(new ArrayList<>(List.of(newPlace)), 0);
-                } else {
-                    currentPlaces.add(newPlace);
-                    onNewAddressResult(currentPlaces, currentPlaces.size() - 1);
-                }
+                addCustomMapMarker(mapPoint.getLatitude(), mapPoint.getLongitude());
             }
         });
 
@@ -127,6 +116,7 @@ public class AddressSelector extends GridPane {
             currentRadius = newRadius.doubleValue();
             if (!txtRadius.getText().equals(String.valueOf(currentRadius))) {
                 txtRadius.setText(String.valueOf(currentRadius));
+                updateArea();
             }
         });
 
@@ -239,7 +229,7 @@ public class AddressSelector extends GridPane {
             mapView.removeLayer(customMapLayer);
             customMapLayer = null;
         }
-        currentRadius = 5000.;
+        currentRadius = DEFAULT_RADIUS;
         selectedPlace = -1;
 
         txtRadius.setText(String.valueOf(currentRadius));
@@ -260,6 +250,27 @@ public class AddressSelector extends GridPane {
         selection.setLon(place.getLon());
         selection.setRadius(currentRadius);
         return selection;
+    }
+
+    public void addCustomMapMarker(double lat, double lon) {
+        var newPlace = new Place();
+        newPlace.setDisplayName("#" + customMaps + ".Custom-Map");
+        newPlace.setLat(lat);
+        newPlace.setLon(lon);
+        customMaps += 1;
+
+        if (selectedPlace < 0) {
+            onNewAddressResult(new ArrayList<>(List.of(newPlace)), 0);
+        } else {
+            currentPlaces.add(newPlace);
+            onNewAddressResult(currentPlaces, currentPlaces.size() - 1);
+        }
+    }
+
+    public void updateRadius(double newRadius) {
+        // Gets chained update.
+        sbRadius.setValue(newRadius);
+        updateArea();
     }
 
     static class CustomMapLayer extends MapLayer {

@@ -7,8 +7,10 @@ import lombok.Setter;
 public class ResponseError {
     @JsonProperty("message")
     private String message;
+
     @JsonProperty("status")
     private int status;
+
     @JsonProperty("time_stamp")
     private long timeStamp;
 }

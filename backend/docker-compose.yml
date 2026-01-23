@@ -26,6 +26,8 @@ services:
       DB_USERNAME: "${DB_USERNAME:-postgres}"
       DB_PASSWORD: "${DB_PASSWORD:-postgres}"
       DDL_AUTO: validate
+      JWT_SECRET: "${JWT_SECRET:-c65fd8a7299ba88bbbca7b794e2d55b6e805811d1a6db100b60b3dcaf7e29185}"
+      ORIGINS: "${ORIGINS-*}"
     restart: unless-stopped
 
 volumes:

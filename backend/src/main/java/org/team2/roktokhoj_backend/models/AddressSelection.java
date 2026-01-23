@@ -64,7 +64,7 @@ class LongitudeValidator implements ConstraintValidator<LongitudeValidation, Dou
 
 @Getter
 @Setter
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class AddressSelection {
     @JsonProperty("lat")

@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class FindBloodDonor {
     @JsonProperty("address_selection")
