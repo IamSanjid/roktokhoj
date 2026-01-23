@@ -39,16 +39,16 @@ The backend is configured using environment variables.
 
 ### Variables
 
-| Variable      | Description                                   | Default         |
-|---------------|-----------------------------------------------|-----------------|
-| `DB_HOST`     | PostgreSQL host                               | `localhost`     |
-| `DB_PORT`     | PostgreSQL port                               | `5432`          |
-| `DB_NAME`     | Database name (created if missing)            | `roktokhoj_api` |
-| `DB_USERNAME` | Database username                             | `postgres`      |
-| `DB_PASSWORD` | Database password                             | ***required**   |
-| `DDL_AUTO`    | Hibernate DDL mode                            | `validate`      |
-| `JWT_SECRET`  | The secret key which will be used for signing | ***required**   |
-| `ORIGINS`     | Allowed origins for CORS                      | `*`             |
+| Variable      | Description                                       | Default         |
+|---------------|---------------------------------------------------|-----------------|
+| `DB_HOST`     | PostgreSQL host                                   | `localhost`     |
+| `DB_PORT`     | PostgreSQL port                                   | `5432`          |
+| `DB_NAME`     | Database name (created if missing)                | `roktokhoj_api` |
+| `DB_USERNAME` | Database username                                 | `postgres`      |
+| `DB_PASSWORD` | Database password                                 | ***required**   |
+| `DDL_AUTO`    | Hibernate DDL mode                                | `validate`      |
+| `JWT_SECRET`  | The secret key which will be used for signing JWT | ***required**   |
+| `ORIGINS`     | Allowed origins for CORS                          | `*`             |
 
 ### Example `.env`
 
